@@ -1,15 +1,21 @@
 import com.antara.restapitesting.model.Ticket;
 import com.antara.restapitesting.model.User;
 import io.restassured.common.mapper.TypeRef;
-import org.junit.Assert;
+import io.restassured.specification.Argument;
+import org.hamcrest.Matcher;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import io.restassured.module.jsv.JsonSchemaValidator;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.containsString;
+import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 
 public class Main {
@@ -47,19 +53,18 @@ public class Main {
 
     @Test
     public void verifyTheStatus() {
-        given().when().get(BASE_URL+ "/user").then().statusCode(200);
+        given().when().get(BASE_URL + "/user").then().statusCode(200);
     }
 
     @Test
     public void verifyName() {
-        given().when().get(BASE_URL+ "/user").then()
+        given().when().get(BASE_URL + "/user").then()
                 .body(containsString("Malcolm"));
     }
 
 
-
     @Test
-    public void verifyUserTicket(){
+    public void verifyUserTicket() {
         Map<String, List<Ticket>> map = new HashMap<>();
 
         for (Ticket ticket : tickets) {
@@ -68,19 +73,17 @@ public class Main {
                 ticketsForUser = new ArrayList<>();
             }
             ticketsForUser.add(ticket);
-            System.out.println(ticket.getCreatedBy().getFirst());
-            System.out.println(ticketsForUser);
             map.put(ticket.getCreatedBy().getFirst(), ticketsForUser);
         }
 
-        assertEquals(2, map.get("malcolm").size());
-
-
+        assertEquals(2, map.get("Malcolm").size());
+        assertEquals(3, map.get("Conrad").size());
+        assertEquals(1, map.get("Leonard").size());
     }
 
 
     @Test
-    public void verifyUserTicket1(){
+    public void verifyUserTicket1() {
         int counter = 0;
         Iterator<Ticket> ticketIterator = tickets.iterator();
         while (ticketIterator.hasNext()) {
@@ -91,8 +94,33 @@ public class Main {
             }
         }
 
-        Assert.assertEquals(counter, 2);
+        assertEquals(counter, 2);
 
     }
+
+
+    @Test
+    public void verifyDate() {
+        given().when().get(BASE_URL_TICKET + "/ticket").then()
+                .statusCode(200).assertThat().body("createdAt", everyItem(hasItem(("2020-05-07T19:14:01.255Z"))));
+
+    }
+
+    @Test
+    public void verifyHowManyUser() throws ParseException {
+        int counter = 0;
+        String date = "2020-05-07";
+        Iterator<Ticket> ticketIterator = tickets.iterator();
+        while (ticketIterator.hasNext()) {
+            Ticket ticket = ticketIterator.next();
+            if (ticket.getCreatedAt().contains(date)) {
+                counter++;
+
+            }
+        }
+
+        assertEquals(counter, 2);
+    }
+
 
 }
