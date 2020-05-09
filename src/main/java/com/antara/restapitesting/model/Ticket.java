@@ -3,27 +3,73 @@ package com.antara.restapitesting.model;
 import java.util.Date;
 
 public class Ticket {
-    int id;
-    Date date;
 
-    Ticket(int id, Date date) {
-        this.id = id;
-        this.date=date;
+    private String id;
+    private String createdAt;
+    private User createdBy;
+    private String description;
+
+    /**
+     * No args constructor for use in serialization
+     */
+    public Ticket() {
     }
 
-    public int getId() {
+    /**
+     * @param createdAt
+     * @param createdBy
+     * @param description
+     * @param id
+     */
+    public Ticket(String id, String createdAt, User createdBy, String description) {
+        super();
+        this.id = id;
+        this.createdAt = createdAt;
+        this.createdBy = createdBy;
+        this.description = description;
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Date getDate() {
-        return date;
+    public String getCreatedAt() {
+        return createdAt;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
+
+    public User getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public String toString() {
+        return "Ticket{" +
+                "id='" + id + '\'' +
+                ", createdAt='" + createdAt + '\'' +
+                ", createdBy=" + createdBy +
+                ", description='" + description + '\'' +
+                '}';
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
 }
+
