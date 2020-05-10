@@ -121,10 +121,13 @@ public class MainTest {
         Date d1 = sdfo.parse("2020-05-07");
         System.out.println("Date1 : " + sdfo.format(d1));
         Iterator<Ticket> iteratorTicket = Main.getTickets().iterator();
+
         while (iteratorTicket.hasNext()) {
             Ticket tickets = iteratorTicket.next();
             System.out.println(tickets.getCreatedAt());
-            if (new Date(tickets.getCreatedAt()).equals(sdfo.format(d1))) {
+            Date date = sdfo.parse(tickets.getCreatedAt());
+
+            if (sdfo.format(date).equals(sdfo.format(d1))) {
                 counter++;
             }
         }
