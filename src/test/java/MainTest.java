@@ -1,6 +1,7 @@
 import com.antara.restapitesting.model.Main;
 import com.antara.restapitesting.model.Ticket;
 import com.antara.restapitesting.model.User;
+import io.restassured.RestAssured;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.specification.Argument;
 import org.hamcrest.Matcher;
@@ -11,13 +12,17 @@ import io.restassured.module.jsv.JsonSchemaValidator;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static com.antara.restapitesting.model.Main.*;
 import static com.antara.restapitesting.model.Main.getUsers;
-import static io.restassured.RestAssured.get;
-import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.*;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 
@@ -117,7 +122,29 @@ public class MainTest {
     @Test
     public void verifyManyTicket() throws ParseException {
         int counter = 0;
+
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate result = LocalDate.parse("2020-05-07", format);
+        Iterator<Ticket> iteratorTicket = Main.getTickets().iterator();
+
+        while (iteratorTicket.hasNext()) {
+            Ticket tickets = iteratorTicket.next();
+            System.out.println(tickets.getCreatedAt());
+            //LocalDateTime inst = LocalDateTime.parse(tickets.getCreatedAt());
+               LocalDateTime inst = LocalDateTime.parse(tickets.getCreatedAt(), format);
+
+            if (inst.getDayOfYear()== (result.getDayOfYear())) {
+                counter++;
+            }
+        }
+        assertEquals(counter, 2);
+    }
+
+    @Test
+    public void verifyManyTicketSdf() throws ParseException {
+        int counter = 0;
         SimpleDateFormat sdfo = new SimpleDateFormat("yyyy-MM-dd");
+
         Date d1 = sdfo.parse("2020-05-07");
         System.out.println("Date1 : " + sdfo.format(d1));
         Iterator<Ticket> iteratorTicket = Main.getTickets().iterator();
@@ -127,12 +154,40 @@ public class MainTest {
             System.out.println(tickets.getCreatedAt());
             Date date = sdfo.parse(tickets.getCreatedAt());
 
+
+
             if (sdfo.format(date).equals(sdfo.format(d1))) {
                 counter++;
             }
         }
         assertEquals(counter, 2);
     }
+
+    @Test
+
+    public void userFirstName(){
+        given().param("first", "Malcolm").when().get(Main.BASE_URL + "/user/1").
+                then().
+                body("first", equalTo("Malcolm"));
+    }
+    @Test
+    public void userLastName(){
+        given().param("last", "Ernser").when().get(Main.BASE_URL + "/user/1").
+                then().
+                body("last", equalTo("Ernser"));
+    }
+
+    @Test
+    public void userFirstNameOtherUser(){
+       given().param("first", "Leonard").when().get(Main.BASE_URL + "/user/4").
+                then().
+                body("first", equalTo("Leonard"));
+    }
+
+
+
+
+
 
 
 
