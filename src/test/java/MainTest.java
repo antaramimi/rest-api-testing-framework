@@ -3,6 +3,8 @@ import com.antara.restapitesting.model.Ticket;
 import com.antara.restapitesting.model.User;
 import io.restassured.RestAssured;
 import io.restassured.common.mapper.TypeRef;
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import io.restassured.specification.Argument;
 import org.hamcrest.Matcher;
 import org.junit.BeforeClass;
@@ -184,11 +186,26 @@ public class MainTest {
                 body("first", equalTo("Leonard"));
     }
 
+    @Test
+    public void putdata(){
+        Map<String, String> map = new HashMap<>();
+        Response response = null;
+        map.put("id", "4");
+        map.put("first", "Ram");
+        map.put("avatar", "https://s3.amazonaws.com/uifaces/faces/twitter/thierrymeier_/128.jpg");
+        map.put("last", "Kemmer");
+
+
+        given()
+                .contentType("application/json")
+                .body(map)
+                .when()
+                .put(BASE_URL+"user/4")
+                .then()
+                .statusCode(200);
+
+    }
+    }
 
 
 
-
-
-
-
-}

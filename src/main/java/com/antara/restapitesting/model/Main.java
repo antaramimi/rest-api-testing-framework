@@ -1,10 +1,12 @@
 package com.antara.restapitesting.model;
 
 import io.restassured.common.mapper.TypeRef;
+import io.restassured.response.Response;
 
 import java.util.List;
 
 import static io.restassured.RestAssured.get;
+import static io.restassured.RestAssured.given;
 
 public class Main {
     public static final String BASE_URL = "https://5eb538e4de5849001638b305.mockapi.io/api/v1";
@@ -20,8 +22,6 @@ public class Main {
         return get(BASE_URL_TICKET + "/ticket").as(new TypeRef<List<Ticket>>() {
         });
     }
-
-
 
 
 
