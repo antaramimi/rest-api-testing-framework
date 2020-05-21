@@ -7,6 +7,7 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.Argument;
 import org.hamcrest.Matcher;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import io.restassured.module.jsv.JsonSchemaValidator;
@@ -31,8 +32,8 @@ import static org.junit.Assert.assertEquals;
 public class MainTest {
 
 
-   @Test
-    public  void getUser() {
+    @Test
+    public void getUser() {
 
 
         System.out.println(getUsers().size());
@@ -49,8 +50,6 @@ public class MainTest {
             System.out.println(getTickets().get(i));
         }
     }
-
-
 
 
     @Test
@@ -75,6 +74,7 @@ public class MainTest {
                 ticketsForUser = new ArrayList<>();
             }
             ticketsForUser.add(ticket);
+            System.out.println(ticketsForUser);
             map.put(ticket.getCreatedBy().getFirst(), ticketsForUser);
         }
 
@@ -90,6 +90,7 @@ public class MainTest {
         Iterator<Ticket> ticketIterator = Main.getTickets().iterator();
         while (ticketIterator.hasNext()) {
             Ticket ticket = ticketIterator.next();
+            System.out.println(ticket.getCreatedBy());
             if (ticket.getCreatedBy().getFirst().equals("Malcolm")) {
                 counter++;
             }
@@ -120,7 +121,7 @@ public class MainTest {
         }
         assertEquals(counter, 2);
     }
-    
+
     @Test
     public void verifyManyTicket() throws ParseException {
         int counter = 0;
@@ -133,9 +134,9 @@ public class MainTest {
             Ticket tickets = iteratorTicket.next();
             System.out.println(tickets.getCreatedAt());
             //LocalDateTime inst = LocalDateTime.parse(tickets.getCreatedAt());
-               LocalDateTime inst = LocalDateTime.parse(tickets.getCreatedAt(), format);
+            LocalDateTime inst = LocalDateTime.parse(tickets.getCreatedAt(), format);
 
-            if (inst.getDayOfYear()== (result.getDayOfYear())) {
+            if (inst.getDayOfYear() == (result.getDayOfYear())) {
                 counter++;
             }
         }
@@ -157,7 +158,6 @@ public class MainTest {
             Date date = sdfo.parse(tickets.getCreatedAt());
 
 
-
             if (sdfo.format(date).equals(sdfo.format(d1))) {
                 counter++;
             }
@@ -167,27 +167,28 @@ public class MainTest {
 
     @Test
 
-    public void userFirstName(){
+    public void userFirstName() {
         given().param("first", "Malcolm").when().get(Main.BASE_URL + "/user/1").
                 then().
                 body("first", equalTo("Malcolm"));
     }
+
     @Test
-    public void userLastName(){
+    public void userLastName() {
         given().param("last", "Ernser").when().get(Main.BASE_URL + "/user/1").
                 then().
                 body("last", equalTo("Ernser"));
     }
 
     @Test
-    public void userFirstNameOtherUser(){
-       given().param("first", "Leonard").when().get(Main.BASE_URL + "/user/4").
+    public void userFirstNameOtherUser() {
+        given().param("first", "Leonard").when().get(Main.BASE_URL + "/user/4").
                 then().
                 body("first", equalTo("Leonard"));
     }
 
     @Test
-    public void putdata(){
+    public void putdata() {
         Map<String, String> map = new HashMap<>();
         Response response = null;
         map.put("id", "4");
@@ -200,12 +201,15 @@ public class MainTest {
                 .contentType("application/json")
                 .body(map)
                 .when()
-                .put(BASE_URL+"user/4")
+                .put(BASE_URL + "user/4")
                 .then()
                 .statusCode(200);
 
     }
-    }
+
+
+
+}
 
 
 
